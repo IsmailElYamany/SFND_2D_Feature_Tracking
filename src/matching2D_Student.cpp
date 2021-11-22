@@ -11,9 +11,13 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
     bool crossCheck = false;
     cv::Ptr<cv::DescriptorMatcher> matcher;
 
+    // Keep copies if we need to convert
+    cv::Mat descSourceFloat = descSource.clone();
+    cv::Mat descRefFloat = descRef.clone();
+
     if (matcherType.compare("MAT_BF") == 0)
     {
-        int normType = cv::NORM_HAMMING;
+        int normType = descriptorType == "DES_HOG" ? cv::NORM_L2 : cv::NORM_HAMMING;
         matcher = cv::BFMatcher::create(normType, crossCheck);
     }
     else if (matcherType.compare("MAT_FLANN") == 0)
@@ -205,7 +209,7 @@ void detKeypointsModern(vector<cv::KeyPoint> &keypoints, cv::Mat &img, string de
 
     if (detectorType == "FAST")
     {
-        detector = cv::SIFT::create();
+        detector = cv::FastFeatureDetector::create();
     }
     else if (detectorType == "BRISK")
     {
